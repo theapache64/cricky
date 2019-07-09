@@ -91,7 +91,7 @@ fun watch(match: Match, isTeam1Batting: Boolean) {
     val updatedMatch = cricInfo.getUpdatedMatch(match.id)
     val notification = getNotification(updatedMatch, prevScore!!, isTeam1Batting)
     if (notification.first != NotificationType.NOTHING) {
-        "F"
+        playSound()
         notify(notification.first.title, notification.second)
     } else {
         println("nothing significant happened")
