@@ -6,7 +6,6 @@ val scanner = Scanner(System.`in`)
 var prevScore: Match? = null
 
 
-
 fun main(args: Array<String>) {
     askMatchDetails()
 }
@@ -108,7 +107,7 @@ private fun playSound() {
                 "/usr/bin/mplayer",
                 "plucky.mp3"
         ));
-    }
+    }.start()
 }
 
 fun getNotification(newMatch: Match, prevScore: Match, isTeam1Batting: Boolean): Pair<NotificationType, String> {
