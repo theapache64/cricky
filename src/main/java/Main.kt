@@ -4,12 +4,7 @@ import java.util.*
 
 val scanner = Scanner(System.`in`)
 var prevScore: Match? = null
-val soundThread = Thread {
-    Runtime.getRuntime().exec(arrayOf(
-            "/usr/bin/mplayer",
-            "plucky.mp3"
-    ));
-}
+
 
 
 fun main(args: Array<String>) {
@@ -96,7 +91,7 @@ fun watch(match: Match, isTeam1Batting: Boolean) {
     val updatedMatch = cricInfo.getUpdatedMatch(match.id)
     val notification = getNotification(updatedMatch, prevScore!!, isTeam1Batting)
     if (notification.first != NotificationType.NOTHING) {
-        soundThread.start()
+        "F"
         notify(notification.first.title, notification.second)
     } else {
         println("nothing significant happened")
@@ -105,6 +100,15 @@ fun watch(match: Match, isTeam1Batting: Boolean) {
     prevScore = updatedMatch
     Thread.sleep(5000)
     watch(match, isTeam1Batting)
+}
+
+private fun playSound() {
+    Thread {
+        Runtime.getRuntime().exec(arrayOf(
+                "/usr/bin/mplayer",
+                "plucky.mp3"
+        ));
+    }
 }
 
 fun getNotification(newMatch: Match, prevScore: Match, isTeam1Batting: Boolean): Pair<NotificationType, String> {
