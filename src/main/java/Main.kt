@@ -1,5 +1,7 @@
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
+import okio.Timeout
+import java.net.SocketTimeoutException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -15,6 +17,7 @@ val request = Request.Builder()
 
 fun main(args: Array<String>) {
     client.setConnectTimeout(1, TimeUnit.MINUTES)
+    client.retryOnConnectionFailure = true
     askMatchDetails()
 }
 
@@ -75,7 +78,12 @@ private fun whosBatting(match: Match) {
 
     prevScore = match
     prevScore!!.findScore()
-    watch(match, batting == 1)
+    try {
+        watch(match, batting == 1)
+    } catch (e: SocketTimeoutException) {
+        println("Timeout from API")
+        watch(match, batting == 1)
+    }
 }
 
 fun watch(match: Match, isTeam1Batting: Boolean) {

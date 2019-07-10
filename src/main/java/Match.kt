@@ -19,15 +19,11 @@ class Match(
         if (team1Score.isNotEmpty()) {
             this.team1Runs = team1Score.split("/")[0].trim().toInt()
             this.team1Wickets = team1Score.split("/")[1].split(" ")[0].trim().toInt()
-            val team1OversFaced = team1Score.split("(")[1].split("/")[0]
-            val team1TotalOvers = team1Score.split("/")[2].split("&")[0]
         }
 
         if (team2Score.isNotEmpty()) {
             this.team2Runs = team2Score.split("/")[0].trim().toInt()
             this.team2Wickets = team2Score.split("/")[1].split(" ")[0].trim().toInt()
-            val team2OversFaced = team2Score.split("(")[1].split("/")[0]
-            val team2TotalOvers = team2Score.split("/")[2].split("&")[0]
         }
     }
 
