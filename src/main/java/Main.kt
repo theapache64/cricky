@@ -17,6 +17,8 @@ val request = Request.Builder()
 
 fun main(args: Array<String>) {
     client.setConnectTimeout(1, TimeUnit.MINUTES)
+    client.setReadTimeout(1, TimeUnit.MINUTES)
+    client.setWriteTimeout(1, TimeUnit.MINUTES)
     client.retryOnConnectionFailure = true
     askMatchDetails()
 }
@@ -65,7 +67,7 @@ fun chooseMatch(liveMatches: List<Match>) {
 
 private fun whosBatting(match: Match) {
 
-    println("Who's batting ?")
+    /*println("Who's batting ?")
     println("1) ${match.team1Name}")
     println("2) ${match.team2Name}")
 
@@ -74,15 +76,22 @@ private fun whosBatting(match: Match) {
         println("Wrong option!!")
         whosBatting(match)
         return
-    }
+    }*/
+
+    val isTeam1Batting = match.team1Score.contains("&nbsp;")
+    println("Batting team is ${if (isTeam1Batting) {
+        match.team1Name
+    } else {
+        match.team2Name
+    }}")
 
     prevScore = match
     prevScore!!.findScore()
     try {
-        watch(match, batting == 1)
+        watch(match, isTeam1Batting)
     } catch (e: SocketTimeoutException) {
         println("Timeout from API")
-        watch(match, batting == 1)
+        watch(match, isTeam1Batting)
     }
 }
 
