@@ -1,12 +1,20 @@
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 val scanner = Scanner(System.`in`)
 var prevScore: Match? = null
 
+val client = OkHttpClient()
+
+val request = Request.Builder()
+        .url("http://api.espncricinfo.com/netstorage/summary.json")
+        .get()
+        .build()
 
 fun main(args: Array<String>) {
+    client.setConnectTimeout(1, TimeUnit.MINUTES)
     askMatchDetails()
 }
 
@@ -20,12 +28,6 @@ fun notify(title: String, message: String) {
 
 
 private fun askMatchDetails() {
-    val client = OkHttpClient()
-
-    val request = Request.Builder()
-            .url("http://api.espncricinfo.com/netstorage/summary.json")
-            .get()
-            .build()
 
     val response = client.newCall(request).execute()
     val cricInfo = CricInfoResponse(response.body().string())
@@ -78,12 +80,6 @@ private fun whosBatting(match: Match) {
 
 fun watch(match: Match, isTeam1Batting: Boolean) {
     println("-------------------------")
-    val client = OkHttpClient()
-
-    val request = Request.Builder()
-            .url("http://api.espncricinfo.com/netstorage/summary.json")
-            .get()
-            .build()
 
     val response = client.newCall(request).execute()
     val cricInfo = CricInfoResponse(response.body().string())
