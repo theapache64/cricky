@@ -1,3 +1,5 @@
+import org.json.JSONObject
+
 class Match(
         val id: String,
         val isLiveMatch: Boolean,
@@ -6,10 +8,12 @@ class Match(
         val team1Score: String,
         val team2Abbr: String,
         val team2Name: String,
-        val team2Score: String
+        val team2Score: String,
+        url: String
 ) {
 
 
+    val url = "https://espncricinfo.com$url"
     var team1Wickets: Int = 0
     var team2Wickets: Int = 0
     var team2Runs: Int = 0
@@ -41,6 +45,32 @@ class Match(
             return team1Wickets - prevScore.team1Wickets
         } else {
             return team2Wickets - prevScore.team2Wickets
+        }
+    }
+
+    companion object {
+        fun parse(id: String, joMatches: JSONObject): Match {
+            val joMatch = joMatches.getJSONObject(id)
+            val isLive = joMatch.getString("live_match") == "Y"
+            val team1Abbr = joMatch.getString("team1_abbrev")
+            val team1Name = joMatch.getString("team1_name")
+            val team1Score = joMatch.getString("team1_score")
+            val team2Abbr = joMatch.getString("team2_abbrev")
+            val team2Name = joMatch.getString("team2_name")
+            val team2Score = joMatch.getString("team2_score")
+            val url = joMatch.getString("url")
+
+            return Match(
+                    id,
+                    isLive,
+                    team1Abbr,
+                    team1Name,
+                    team1Score,
+                    team2Abbr,
+                    team2Name,
+                    team2Score,
+                    url
+            )
         }
     }
 }

@@ -1,7 +1,8 @@
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
-import okio.Timeout
+import java.awt.Desktop
 import java.net.SocketTimeoutException
+import java.net.URI
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -87,15 +88,32 @@ private fun whosBatting(match: Match) {
 
     prevScore = match
     prevScore!!.findScore()
+
+    askRefreshInterval(match, isTeam1Batting)
+}
+
+fun askRefreshInterval(match: Match, isTeam1Batting: Boolean) {
+    print("Refresh interval in seconds : ")
+    val refreshInterval = scanner.nextInt()
+    if (refreshInterval < 1) {
+        println("Refresh interval must greater than zero")
+        askRefreshInterval(match, isTeam1Batting)
+        return
+    }
+    println("Refresh interval : $refreshInterval second(s)")
+
+    val refreshIntervalInMillis = refreshInterval * 1000L
+
     try {
-        watch(match, isTeam1Batting)
+
+        watch(match, isTeam1Batting, refreshIntervalInMillis)
     } catch (e: SocketTimeoutException) {
         println("Timeout from API")
-        watch(match, isTeam1Batting)
+        watch(match, isTeam1Batting, refreshIntervalInMillis)
     }
 }
 
-fun watch(match: Match, isTeam1Batting: Boolean) {
+fun watch(match: Match, isTeam1Batting: Boolean, updateIntervalInMillis: Long) {
     println("-------------------------")
 
     val response = client.newCall(request).execute()
@@ -103,15 +121,20 @@ fun watch(match: Match, isTeam1Batting: Boolean) {
     val updatedMatch = cricInfo.getUpdatedMatch(match.id)
     val notification = getNotification(updatedMatch, prevScore!!, isTeam1Batting)
     if (notification.first != NotificationType.NOTHING) {
-        playSound()
         notify(notification.first.title, notification.second)
+        playSound()
+        openDefaultBrowser(match.url)
     } else {
         println("nothing significant happened")
     }
 
     prevScore = updatedMatch
-    Thread.sleep(5000)
-    watch(match, isTeam1Batting)
+    Thread.sleep(updateIntervalInMillis)
+    watch(match, isTeam1Batting, updateIntervalInMillis)
+}
+
+fun openDefaultBrowser(url: String) {
+    Desktop.getDesktop().browse(URI(url))
 }
 
 private fun playSound() {
